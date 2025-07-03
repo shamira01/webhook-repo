@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Webhook Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>GitHub Repository Activity Monitor</h1>
+        <div class="status-indicator">
+            <span id="status">🟢 Live</span>
+            <span id="last-update">Last updated: Never</span>
+        </div>
+        <div id="events-container">
+            <p>Loading events...</p>
+        </div>
+    </div>
+    
+    <script>
+        function formatEventMessage(event) {
+            const author = event.author;
+            const timestamp = event.timestamp;
+            
+            switch(event.action) {
+                case 'push':
+                    return `${author} pushed to ${event.to_branch} on ${timestamp}`;
+                case 'pull_request':
+                    return `${author} submitted a pull request from ${event.from_branch} to ${event.to_branch} on ${timestamp}`;
+                case 'merge':
+                    return `${author} merged branch ${event.from_branch} to ${event.to_branch} on ${timestamp}`;
+                default:
+                    return `${author} performed ${event.action} on ${timestamp}`;
+            }
+        }
+        
+        function updateEvents() {
+            fetch('/api/events')
+                .then(response => response.json())
+                .then(events => {
+                    const container = document.getElementById('events-container');
+                    
+                    if (events.length === 0) {
+                        container.innerHTML = '<p>No events yet. Try pushing to your repository!</p>';
+                        return;
+                    }
+                    
+                    container.innerHTML = events.map(event => {
+                        const message = formatEventMessage(event);
+                        return `
+                            <div class="event-item event-${event.action}">
+                                <div class="event-message">${message}</div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    // Update last update time
+                    document.getElementById('last-update').textContent = 
+                        `Last updated: ${new Date().toLocaleTimeString()}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching events:', error);
+                    document.getElementById('status').textContent = '🔴 Error';
+                });
+        }
+        
+        // Initial load
+        updateEvents();
+        
+        // Poll every 15 seconds
+        setInterval(updateEvents, 15000);
+    </script>
+</body>
+</html>
