@@ -32,6 +32,13 @@ Events are stored in **MongoDB** and displayed on a simple web dashboard with au
 
 ![image](https://github.com/user-attachments/assets/2e889dda-e37c-4cf0-b754-2eebb4f58907)
 
+![image](https://github.com/user-attachments/assets/8a174542-df6f-45bb-9588-09b02841d1e7)
+
+![image](https://github.com/user-attachments/assets/53deb0f4-0705-42b4-a70e-c14801b844ef)
+
+![image](https://github.com/user-attachments/assets/2cbd99b3-3997-4f1a-9e6e-9a217eb2ecab)
+
+
 
 ## 🚀 **Getting Started**
 
